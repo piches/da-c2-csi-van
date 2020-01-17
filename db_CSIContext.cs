@@ -259,7 +259,7 @@ namespace CsiApi
 
             modelBuilder.Entity<SurveillanceObservation>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("surveillance_observation");
 
@@ -290,7 +290,7 @@ namespace CsiApi
 
             modelBuilder.Entity<SurveillancePerson>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("surveillance_person");
 
@@ -301,7 +301,7 @@ namespace CsiApi
 
             modelBuilder.Entity<SurveillanceVehicle>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("surveillance_vehicle");
 
