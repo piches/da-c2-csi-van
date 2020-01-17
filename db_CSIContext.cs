@@ -1,13 +1,94 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace CsiApi
 {
+
+    public class Logger : ILogger, IDisposable
+    {
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return this;
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            var s = formatter.Invoke(state, exception); 
+
+            Console.WriteLine(s);
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~Logger()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
+    }
+    public class LoggingFactory : ILoggerFactory
+    {
+        private Logger _logger = new Logger(); 
+
+        public void AddProvider(ILoggerProvider provider)
+        {
+            return;
+        }
+
+        public ILogger CreateLogger(string categoryName)
+        {
+            return _logger;
+        }
+
+        public void Dispose()
+        {
+            _logger.Dispose();
+        }
+    }
     public partial class db_CSIContext : DbContext
     {
+        private static readonly ILoggerFactory loggerFactory = new LoggingFactory();
+
+
         public db_CSIContext()
         {
+        
         }
 
         public db_CSIContext(DbContextOptions<db_CSIContext> options)
@@ -31,10 +112,16 @@ namespace CsiApi
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
             if (!optionsBuilder.IsConfigured)
             {
+                optionsBuilder//.UseLoggerFactory(loggerFactory)  //tie-up DbContext with LoggerFactory object
+                .UseLoggerFactory(loggerFactory)
+                .EnableSensitiveDataLogging()
+                .UseSqlite("Data Source=C:\\Users\\piches\\Documents\\Digital Academy\\Practicum\\Data\\db_CSI.db");
 
-                optionsBuilder.UseSqlite("Data Source=*path to db*");
+                
+                
             }
         }
 
@@ -80,7 +167,7 @@ namespace CsiApi
 
             modelBuilder.Entity<Person>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("person");
 
@@ -127,13 +214,17 @@ namespace CsiApi
 
             modelBuilder.Entity<PersonPhone>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
+                entity.HasKey(e => new { e.PersonId , e.PhoneId });
+                
 
                 entity.ToTable("person_phone");
 
                 entity.Property(e => e.PersonId).HasColumnName("person_id");
 
                 entity.Property(e => e.PhoneId).HasColumnName("phone_id");
+
+                
             });
 
             modelBuilder.Entity<PersonVehicle>(entity =>
@@ -153,7 +244,7 @@ namespace CsiApi
 
                 entity.ToTable("phone");
 
-                entity.Property(e => e.AreaCode).HasColumnName("area_code");
+                //entity.Property(e => e.AreaCode).HasColumnName("area_code");
 
                 entity.Property(e => e.PhoneId).HasColumnName("phone_id");
 
@@ -163,7 +254,7 @@ namespace CsiApi
 
                 entity.Property(e => e.SubscriberName).HasColumnName("subscriber_name");
 
-                entity.Property(e => e.SubsriberAddress).HasColumnName("subsriber_address");
+                entity.Property(e => e.SubscriberAddress).HasColumnName("subscriber_address");
             });
 
             modelBuilder.Entity<SurveillanceObservation>(entity =>
@@ -294,11 +385,13 @@ namespace CsiApi
 
             modelBuilder.Entity<VehicleFix>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
 
                 entity.ToTable("vehicle_fix");
 
                 entity.Property(e => e.DocumentId).HasColumnName("document_id");
+
+                entity.HasKey(e => new { e.FixId , e.VehicleId });
 
                 entity.Property(e => e.FixId).HasColumnName("fix_id");
 
@@ -306,7 +399,8 @@ namespace CsiApi
                     .HasColumnName("vehicle_fix_date_time")
                     .HasColumnType("NUMERIC");
 
-                entity.Property(e => e.VehicleFixId).HasColumnName("vehicle_fix_id");
+                //entity.Property(e => e.VehicleFixId).HasColumnName("vehicle_fix_id");
+
 
                 entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
 
@@ -317,6 +411,9 @@ namespace CsiApi
                 entity.Property(e => e.VehicleLongitude)
                     .HasColumnName("vehicle_longitude")
                     .HasColumnType("NUMERIC");
+
+            
+
             });
 
             OnModelCreatingPartial(modelBuilder);

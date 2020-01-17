@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace CsiApi
 {
@@ -16,5 +18,8 @@ namespace CsiApi
         public string VehicleColour { get; set; }
         public long? VehicleYear { get; set; }
         public string VehicleRegisteredOwner { get; set; }
+
+        [NotMapped]
+        public ICollection<VehicleFix> Fixes {get;set;}
     }
 }

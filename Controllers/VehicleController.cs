@@ -6,14 +6,39 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CsiApi;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
 
 namespace CsiApi.Controllers
 {
+
+    public class MonitorOptions : IOptionsMonitor<ConsoleLoggerOptions>
+    {
+        public ConsoleLoggerOptions CurrentValue => new ConsoleLoggerOptions();
+
+        public ConsoleLoggerOptions Get(string name)
+        {
+            return CurrentValue;
+        }
+
+        public IDisposable OnChange(Action<ConsoleLoggerOptions, string> listener)
+        {
+            return null;
+        }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class VehicleController : ControllerBase
     {
         private readonly db_CSIContext _context;
+
+        private static readonly ILoggerFactory loggerFactory = new LoggerFactory(new[] {
+              new ConsoleLoggerProvider(new MonitorOptions())
+        });
+
+        public static ILoggerFactory LoggerFactory => loggerFactory;
 
         public VehicleController(db_CSIContext context)
         {
@@ -39,6 +64,16 @@ namespace CsiApi.Controllers
                 return NotFound(); 
 
             var vehicle = await _context.Vehicle.FirstOrDefaultAsync(v => v.VehicleLicensePlate.ToLower() == plate.ToLower());
+
+            if(vehicle != null)
+            {
+                var fixes =  _context.VehicleFix.Where(vf => vf.VehicleId == vehicle.VehicleId);
+                var fixCollection = new List<VehicleFix>();
+                foreach(var f in fixes)
+                    fixCollection.Add(f); 
+                    
+                vehicle.Fixes = fixCollection;
+            }
 
             if (vehicle == null)
             {
