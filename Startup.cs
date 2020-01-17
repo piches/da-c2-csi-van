@@ -28,6 +28,12 @@ namespace CsiApi
             
             services.AddControllers();
             services.AddDbContext<db_CSIContext>();
+
+            services.AddCors(options =>{
+                options.AddPolicy("all", builder =>{
+                    builder.AllowAnyOrigin();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
