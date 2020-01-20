@@ -29,16 +29,22 @@ namespace CsiApi.Controllers
 
         // GET: api/PhoneCall/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PhoneCall>> GetPhoneCall(long id)
+        public ActionResult<List<PhoneCall>> GetPhoneCall(long id)
         {
-            var phoneCall = await _context.PhoneCall.FindAsync(id);
 
-            if (phoneCall == null)
-            {
+            var phoneIds = _context.PersonPhone.Where(pp => pp.PersonId == id).Select(pp => pp.PhoneId);
+
+            if(!phoneIds.Any())
                 return NotFound();
+            
+            var calls = new List<PhoneCall>();
+            foreach(var phoneId in phoneIds)
+            {
+                var callsForPhone = _context.PhoneCall.Where(pc => pc.TargetPhoneId == phoneId);
+                calls.AddRange(callsForPhone);
             }
 
-            return phoneCall;
+            return Ok(calls);
         }
 
         // PUT: api/PhoneCall/5
