@@ -102,6 +102,7 @@ namespace CsiApi
         public virtual DbSet<PersonPhone> PersonPhone { get; set; }
         public virtual DbSet<PersonVehicle> PersonVehicle { get; set; }
         public virtual DbSet<Phone> Phone { get; set; }
+        public virtual DbSet<PhoneCall> PhoneCall { get; set; }
         public virtual DbSet<SurveillanceObservation> SurveillanceObservation { get; set; }
         public virtual DbSet<SurveillancePerson> SurveillancePerson { get; set; }
         public virtual DbSet<SurveillanceVehicle> SurveillanceVehicle { get; set; }
@@ -255,6 +256,51 @@ namespace CsiApi
                 entity.Property(e => e.SubscriberName).HasColumnName("subscriber_name");
 
                 entity.Property(e => e.SubscriberAddress).HasColumnName("subscriber_address");
+            });
+
+             modelBuilder.Entity<PhoneCall>(entity =>
+            {
+                //entity.HasNoKey();
+
+                entity.ToTable("phone_call");
+
+                entity.Property(e => e.CallDirection).HasColumnName("call_direction");
+
+                entity.Property(e => e.CallDuration)
+                    .HasColumnName("call_duration")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.CallStartDateTime)
+                    .HasColumnName("call_start_date_time")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.CallType).HasColumnName("call_type");
+
+                entity.Property(e => e.ContactPhoneId).HasColumnName("contact_phone_id");
+
+                entity.Property(e => e.EndCellTowerAddress).HasColumnName("end_cell_tower_address");
+
+                entity.Property(e => e.EndCellTowerLatitude)
+                    .HasColumnName("end_cell_tower_latitude")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.EndCellTowerLongitude)
+                    .HasColumnName("end_cell_tower_longitude")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.PhoneCallId).HasColumnName("phone_call_id");
+
+                entity.Property(e => e.StartCellTowerAddress).HasColumnName("start_cell_tower_address");
+
+                entity.Property(e => e.StartCellTowerLatitude)
+                    .HasColumnName("start_cell_tower_latitude")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.StartCellTowerLongitude)
+                    .HasColumnName("start_cell_tower_longitude")
+                    .HasColumnType("NUMERIC");
+
+                entity.Property(e => e.TargetPhoneId).HasColumnName("target_phone_id");
             });
 
             modelBuilder.Entity<SurveillanceObservation>(entity =>
