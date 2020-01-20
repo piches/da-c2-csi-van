@@ -360,7 +360,7 @@ namespace CsiApi
 
             modelBuilder.Entity<Task>(entity =>
             {
-                entity.HasNoKey();
+               // entity.HasNoKey();
 
                 entity.ToTable("task");
 
