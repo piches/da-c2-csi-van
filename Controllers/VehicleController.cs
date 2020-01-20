@@ -67,12 +67,12 @@ namespace CsiApi.Controllers
 
             if(vehicle != null)
             {
-                var fixes =  _context.VehicleFix.Where(vf => vf.VehicleId == vehicle.VehicleId);
-                var fixCollection = new List<VehicleFix>();
-                foreach(var f in fixes)
-                    fixCollection.Add(f); 
+                var stops =  _context.VehicleStop.Where(vf => vf.VehicleId == vehicle.VehicleId);
+                var stopCollection = new List<VehicleStop>();
+                foreach(var f in stops)
+                    stopCollection.Add(f); 
                     
-                vehicle.Fixes = fixCollection;
+                vehicle.Stops = stopCollection;
             }
 
             if (vehicle == null)

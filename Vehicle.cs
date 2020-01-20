@@ -20,6 +20,6 @@ namespace CsiApi
         public string VehicleRegisteredOwner { get; set; }
 
         [NotMapped]
-        public ICollection<VehicleFix> Fixes {get;set;}
+        public ICollection<VehicleStop> Stops {get;set;}
     }
 }

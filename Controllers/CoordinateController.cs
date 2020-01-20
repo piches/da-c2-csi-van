@@ -20,7 +20,7 @@ namespace CsiApi.Controllers
     public class PersonCoordinate
     {
         public Person Target { get;set; }
-        public List<Coordinate<Vehicle>> TrackingData { get; set; }
+        public List<Coordinate<VehicleStop>> TrackingData { get; set; }
         public List<Coordinate<PhoneCall>> CellphoneData { get; set;}
         public List<Coordinate<SurveillanceObservation>> SurveillanceData { get; set; }
 
@@ -60,7 +60,7 @@ namespace CsiApi.Controllers
 
             Target = target;
 
-            TrackingData = new List<Coordinate<Vehicle>>();
+            TrackingData = new List<Coordinate<VehicleStop>>();
             CellphoneData = new List<Coordinate<PhoneCall>>();
             SurveillanceData = new List<Coordinate<SurveillanceObservation>>();
 
@@ -120,20 +120,15 @@ namespace CsiApi.Controllers
             {
                 if(v != null)
                 {
-                    
-                        var fixes =  _context.VehicleFix.Where(vf => vf.VehicleId == v.VehicleId && vf.VehicleLatitude.HasValue && vf.VehicleLongitude.HasValue).Take(100);
-                        var vehicleInstance = _context.Vehicle.SingleOrDefault(dbV => dbV.VehicleId == v.VehicleId);
-                        foreach(var fix in fixes)
-                        {
-                            var c = new Coordinate<Vehicle>(vehicleInstance, DataSourceType.TrackerData);
-                            DateTime time;
-                            if(DateTime.TryParse(fix.VehicleFixDateTime, out time))
-                                c.Time  = time;
-                            c.Lat = fix.VehicleLatitude;
-                            c.Long = fix.VehicleLongitude; 
-
-                            pc.TrackingData.Add(c);
-                        }
+                    var stops =  _context.VehicleStop.Where(vs => vs.VehicleId == v.VehicleId && vs.VehicleLatitude.HasValue && vs.VehicleLongitude.HasValue);//.Take(100);
+                    foreach(var stop in stops)
+                    {
+                        pc.TrackingData.Add( new Coordinate<VehicleStop>(stop, DataSourceType.TrackerData){
+                            Lat = stop.VehicleLatitude, 
+                            Long = stop.VehicleLongitude,
+                            Time = stop.StopStart
+                        });
+                    }
                 }
             }
 

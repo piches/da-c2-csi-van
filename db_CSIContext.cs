@@ -110,6 +110,8 @@ namespace CsiApi
         public virtual DbSet<TaskAction> TaskAction { get; set; }
         public virtual DbSet<Vehicle> Vehicle { get; set; }
         public virtual DbSet<VehicleFix> VehicleFix { get; set; }
+        public virtual DbSet<VehicleStop> VehicleStop { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -460,6 +462,33 @@ namespace CsiApi
 
             
 
+            });
+
+             modelBuilder.Entity<VehicleStop>(entity =>
+            {
+                //entity.HasNoKey();
+
+                entity.ToTable("vehicle_stop");
+
+                entity.Property(e => e.DocumentId).HasColumnName("document_id");
+
+                entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
+
+                entity.Property(e => e.VehicleLatitude).HasColumnName("vehicle_latitude");
+
+                entity.Property(e => e.VehicleLongitude).HasColumnName("vehicle_longitude");
+
+                entity.Property(e => e.VehicleStopDuration).HasColumnName("vehicle_stop_duration");
+
+                entity.Property(e => e.VehicleStopEndDateTime).HasColumnName("vehicle_stop_end_date_time");
+
+                entity.Property(e => e.VehicleStopId).HasColumnName("vehicle_stop_id");
+
+                entity.Property(e => e.VehicleStopNumber).HasColumnName("vehicle_stop_number");
+
+                entity.Property(e => e.VehicleStopStartDateTime)
+                    .HasColumnName("vehicle_stop_start_date_time")
+                    .HasColumnType("NUMERIC");
             });
 
             OnModelCreatingPartial(modelBuilder);
