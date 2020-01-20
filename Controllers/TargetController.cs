@@ -20,18 +20,19 @@ namespace CsiApi.Controllers
             _context = context;
         }
 
-        // GET: api/Person
+        // GET: api/Target
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetTarget()
         {
             return await _context.Person.Where(p => p.TargetNumber != null).ToListAsync();
         }
 
-        // GET: api/Person/5
+        // GET: api/Target/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetTarget(long? id)
         {
-            var person = await _context.Person.FindAsync(id);
+
+            var person = await _context.Person.SingleOrDefaultAsync(p => p.TargetNumber == id);
 
             if(!person.TargetNumber.HasValue)
                 return NotFound();
