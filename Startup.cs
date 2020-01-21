@@ -47,7 +47,7 @@ namespace CsiApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            
+            app.UseCors("all");
 
             app.UseAuthorization();
 
