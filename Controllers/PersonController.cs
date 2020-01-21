@@ -46,7 +46,12 @@ namespace CsiApi.Controllers
                 var phones =  _context.PersonPhone.Where(pp => pp.PersonId == person.PersonId);
                 var phoneCollection = new List<Phone>();
                 foreach(var phone in phones)
-                    phoneCollection.Add(_context.Phone.SingleOrDefault(p => p.PhoneId == phone.PhoneId)); 
+                {
+                    var phResult = _context.Phone.SingleOrDefault(p => p.PhoneId == phone.PhoneId);
+                    phResult.PhoneNumber = phResult.RandomPhoneNumber;
+
+                    phoneCollection.Add(phResult); 
+                }
                     
                 person.Phones = phoneCollection;
 
