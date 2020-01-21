@@ -24,7 +24,22 @@ namespace CsiApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VehicleStop>>> GetVehicleStop()
         {
-            return await _context.VehicleStop.ToListAsync();
+            var stops = await _context.VehicleStop.ToListAsync();
+            
+            foreach(var s in stops)
+            {
+                var pv = _context.PersonVehicle.SingleOrDefault(pv => pv.VehicleId == s.VehicleId);
+                if(pv != null)
+                {
+                    var person = _context.Person.SingleOrDefault(p => p.PersonId == pv.PersonId);
+                    if(person != null)
+                    {
+                        s.TargetNumber = person.TargetNumber;
+                    }
+                }
+            }
+
+            return stops;
         }
 
         // GET: api/VehicleStop/5
@@ -32,6 +47,19 @@ namespace CsiApi.Controllers
         public ActionResult<List<VehicleStop>> GetVehicleStop(long id)
         {
             var stops = _context.VehicleStop.Where(vs => vs.VehicleId == id);
+
+            foreach(var s in stops)
+            {
+                var pv = _context.PersonVehicle.SingleOrDefault(pv => pv.VehicleId == id);
+                if(pv != null)
+                {
+                    var person = _context.Person.SingleOrDefault(p => p.PersonId == pv.PersonId);
+                    if(person != null)
+                    {
+                        s.TargetNumber = person.TargetNumber;
+                    }
+                }
+            }
 
             if (!stops.Any())
             {

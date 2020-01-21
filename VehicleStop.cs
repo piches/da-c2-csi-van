@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CsiApi
 {
@@ -16,6 +17,9 @@ namespace CsiApi
         public double? VehicleLatitude { get; set; }
         public double? VehicleLongitude { get; set; }
         public long? VehicleStopDuration { get; set; }
+
+        [NotMapped]
+        public long? TargetNumber { get; set; }
 
         public DateTime StopStart
         {
